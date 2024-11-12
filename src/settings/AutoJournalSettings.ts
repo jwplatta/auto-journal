@@ -10,6 +10,8 @@ export interface AutoJournalSettings {
 		model: string;
 		models: string[];
 	},
+	toggleOpenAISettings: boolean,
+	toggleOllamaSettings: boolean
 }
 
 export const DEFAULT_SETTINGS: AutoJournalSettings = {
@@ -24,4 +26,6 @@ export const DEFAULT_SETTINGS: AutoJournalSettings = {
 		model: 'llama3.2:latest',
 		models: [],
 	},
+	toggleOpenAISettings: false,
+	toggleOllamaSettings: false
 }
