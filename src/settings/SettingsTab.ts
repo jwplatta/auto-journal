@@ -1,3 +1,8 @@
+import { App, PluginSettingTab, Setting } from 'obsidian';
+import { openAISettings } from '@/src/settings/OpenAISettings';
+import { ollamaSettings } from '@/src/settings/OllamaSettings';
+import AutoJournal from '@/main';
+
 export class SettingsTab extends PluginSettingTab {
 	plugin: AutoJournal;
 
@@ -8,18 +13,24 @@ export class SettingsTab extends PluginSettingTab {
 
 	display(): void {
 		const {containerEl} = this;
+    containerEl.empty();
+		containerEl.createEl('h1', { text: 'Auto Journal Settings' });
 
-		containerEl.empty();
+		addHorizontalRule(containerEl);
+    // NOTE: folder for journal entries
+    // NOTE: schedule for writing the journal entries
+    // NOTE: configure them models
 
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
+    addHorizontalRule(containerEl);
+    openAISettings(containerEl, this.plugin, this);
+
+    addHorizontalRule(containerEl);
+    ollamaSettings(containerEl, this.plugin, this);
 	}
+}
+
+function addHorizontalRule(containerEl: HTMLElement) {
+	const separator = document.createElement('hr');
+	separator.style.margin = '1rem 0';
+	containerEl.appendChild(separator);
 }
