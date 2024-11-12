@@ -1,4 +1,5 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { SettingsTab } from 'src/settings/SettingsTab';
 import { execSync } from 'child_process';
 
 interface AutoJournalSettings {
@@ -20,22 +21,26 @@ export default class AutoJournal extends Plugin {
 		});
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
 
-
-		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
-			id: 'git-diff',
-			name: 'Git Diff',
+			id: 'show-git-diff',
+			name: 'Show Git Diff',
 			callback: () => {
 				try {
-					const output = execSync('git diff').toString();
-					console.log(output);
+					const vaultAdapter = this.app.vault.adapter as any;
+					const vaultPath = vaultAdapter.basePath;
+					console.log("vault path: ", vaultPath);
+
+					const diff = execSync('git diff', { cwd: vaultPath }).toString();
+
+					new GitDiffModal(this.app, diff).open()
+
 				} catch (error) {
 						console.error('Error running git command:', error);
 				}
 			}
 		});
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new SettingsTab(this.app, this));
 
 		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
 			console.log('click', evt);
@@ -57,14 +62,16 @@ export default class AutoJournal extends Plugin {
 	}
 }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
+class GitDiffModal extends Modal {
+	diff: string;
+	constructor(app: App, diff: string) {
 		super(app);
+		this.diff = diff;
 	}
 
 	onOpen() {
 		const {contentEl} = this;
-		contentEl.setText('Woah!');
+		contentEl.setText(this.diff);
 	}
 
 	onClose() {
@@ -73,28 +80,3 @@ class SampleModal extends Modal {
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: AutoJournal;
-
-	constructor(app: App, plugin: AutoJournal) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const {containerEl} = this;
-
-		containerEl.empty();
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
-	}
-}
