@@ -1,14 +1,7 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { SettingsTab } from 'src/settings/SettingsTab';
 import { execSync } from 'child_process';
-
-interface AutoJournalSettings {
-	mySetting: string;
-}
-
-const DEFAULT_SETTINGS: AutoJournalSettings = {
-	mySetting: 'default'
-}
+import { AutoJournalSettings, DEFAULT_SETTINGS } from 'src/settings/AutoJournalSettings';
 
 export default class AutoJournal extends Plugin {
 	settings: AutoJournalSettings;
@@ -29,9 +22,7 @@ export default class AutoJournal extends Plugin {
 					const vaultAdapter = this.app.vault.adapter as any;
 					const vaultPath = vaultAdapter.basePath;
 					console.log("vault path: ", vaultPath);
-
 					const diff = execSync('git diff', { cwd: vaultPath }).toString();
-
 					new GitDiffModal(this.app, diff).open()
 
 				} catch (error) {
@@ -39,6 +30,22 @@ export default class AutoJournal extends Plugin {
 				}
 			}
 		});
+
+		this.addCommand({
+			id: 'write-journal-entry',
+			name: 'Write Journal Entry',
+			callback: () => {
+				console.log('write-journal-entry');
+			}
+		});
+
+		this.addCommand({
+			id: 'update-journal-entry',
+			name: 'Update Journal Entry',
+			callback: () => {
+				console.log('update-journal-entry');
+			}
+		})
 
 		this.addSettingTab(new SettingsTab(this.app, this));
 
