@@ -1,5 +1,4 @@
 export interface AutoJournalSettings {
-  gitignore: string,
   llm: string;
   openAI: {
 		key: string;
@@ -10,12 +9,13 @@ export interface AutoJournalSettings {
 		model: string;
 		models: string[];
 	},
+	gitignore: string,
+	toggleGitignoreSettings: boolean,
 	toggleOpenAISettings: boolean,
-	toggleOllamaSettings: boolean
+	toggleOllamaSettings: boolean,
 }
 
 export const DEFAULT_SETTINGS: AutoJournalSettings = {
-  gitignore: "",
   llm: "gpt-4o-mini",
 	openAI: {
 		key: '',
@@ -26,6 +26,8 @@ export const DEFAULT_SETTINGS: AutoJournalSettings = {
 		model: 'llama3.2:latest',
 		models: [],
 	},
+	gitignore: "*",
+	toggleGitignoreSettings: false,
 	toggleOpenAISettings: false,
 	toggleOllamaSettings: false
 }
