@@ -19,6 +19,50 @@ export class SettingsTab extends PluginSettingTab {
     containerEl.empty();
 		containerEl.createEl('h1', { text: 'Auto Journal Settings' });
 
+    new Setting(containerEl)
+      .setName('Journal Entries Folder')
+      .setDesc('Folder to store journal entries')
+      .addText(text => {
+        text
+          .setPlaceholder('Journal')
+          .setValue(this.plugin.settings.journalFolder)
+          .onChange(async (value) => {
+            this.plugin.settings.journalFolder = value;
+            await this.plugin.saveSettings();
+          })
+          .then((cb) => {
+            cb.inputEl.style.width = '100%';
+          });
+      });
+
+
+    new Setting(containerEl)
+      .setName("Writing Schedule")
+      .setDesc("How often the days journal entry should be updated.")
+      .addDropdown(dropdown =>
+        dropdown
+          .addOption("minute", "Every Minute")
+          .addOption("hour", "Every Hour")
+          .addOption("day", "Once a Day")
+          .setValue(this.plugin.settings.schedule)
+          .onChange(async (value) => {
+            this.plugin.settings.schedule = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Start Time")
+      .setDesc("Specify the  (HH:MM).")
+      .addText(text =>
+        text
+          .setPlaceholder("08:00")
+          .setValue(this.plugin.settings.startTime)
+          .onChange(async (value) => {
+            this.plugin.settings.startTime = value;
+            await this.plugin.saveSettings();
+          })
+      );
 
     // new Setting(containerEl)
     //   .setName('Exclude Files and Folders')
@@ -38,9 +82,6 @@ export class SettingsTab extends PluginSettingTab {
     //   });
 
     gitignoreSettings(containerEl, this.plugin, this.app, this);
-
-    // NOTE: folder for journal entries
-    // NOTE: schedule for writing the journal entries
 
     // NOTE: configure them models
     addHorizontalRule(containerEl);
