@@ -53,12 +53,51 @@ export default class AutoJournal extends Plugin {
 			console.log('click', evt);
 		});
 
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		const interval = this.getIntervalMilliseconds(this.settings.schedule);
+    const delay = this.calculateInitialDelay(this.settings.startTime);
+
+		setTimeout(() => {
+			this.writeJournalEntry();
+			this.registerInterval(window.setInterval(() => {
+				this.writeJournalEntry();
+			}, interval));
+		}, delay);
 	}
 
-	onunload() {
+	onunload() {}
 
-	}
+	writeJournalEntry() {
+    console.log('Writing journal entry:', new Date().toLocaleString());
+  }
+
+	getIntervalMilliseconds(setting: string): number {
+    switch (setting) {
+      case 'minute': return 60 * 1000;
+      case 'hour': return 60 * 60 * 1000;
+      case 'day': return 24 * 60 * 60 * 1000;
+      default: return 24 * 60 * 60 * 1000;
+    }
+  }
+
+	calculateInitialDelay(startTime: string): number {
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const now = new Date();
+    const start = new Date(
+			now.getFullYear(),
+			now.getMonth(),
+			now.getDate(),
+			startHour,
+			startMinute,
+			0,
+			0
+		);
+
+    if (now > start) {
+      start.setDate(start.getDate() + 1);
+    }
+
+    return start.getTime() - now.getTime();
+  }
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
