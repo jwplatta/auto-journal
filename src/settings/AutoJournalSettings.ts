@@ -10,6 +10,9 @@ export interface AutoJournalSettings {
 		models: string[];
 	},
 	gitignore: string,
+	journalFolder: string,
+	schedule: string,
+	startTime: string,
 	toggleGitignoreSettings: boolean,
 	toggleOpenAISettings: boolean,
 	toggleOllamaSettings: boolean,
@@ -27,6 +30,9 @@ export const DEFAULT_SETTINGS: AutoJournalSettings = {
 		models: [],
 	},
 	gitignore: "*",
+	journalFolder: "/",
+	schedule: "day",
+	startTime: "00:00",
 	toggleGitignoreSettings: false,
 	toggleOpenAISettings: false,
 	toggleOllamaSettings: false
